@@ -1,4 +1,4 @@
-const listaVeterinarios = document.getElementById("lista-veterinarios");
+const listaDuenos = document.getElementById("lista-duenos");
 const nombre = document.getElementById("nombre");
 const apellido = document.getElementById("apellido");
 const identificacion = document.getElementById("identificacion");
@@ -7,7 +7,7 @@ const indice = document.getElementById("indice");
 const formulario = document.getElementById("formulario");
 const btnGuardar = document.getElementById("btn-guardar");
 
-let veterinarios = [
+let duenos = [
   {
     nombre: "Edel",
     apellido: "Zapata",
@@ -22,15 +22,15 @@ let veterinarios = [
   }
 ];
 
-function listarVeterinarios() {
-  const htmlVeterinarios = veterinarios
+function listarDuenos() {
+  const htmlDuenos = duenos
     .map(
-      (veterinario, index) => `<tr>
+      (dueno, index) => `<tr>
     <th scope="row">${index}</th>
-    <td>${veterinario.nombre}</td>
-    <td>${veterinario.apellido}</td>
-    <td>${veterinario.pais}</td>
-    <td>${veterinario.identificacion}</td>
+    <td>${dueno.nombre}</td>
+    <td>${dueno.apellido}</td>
+    <td>${dueno.pais}</td>
+    <td>${dueno.identificacion}</td>
     <td>
       <div class="" role="group" aria-label="Basic example">
         <button type="button" class="btn btn-outline-warning editar" data-bs-toggle="modal"
@@ -45,14 +45,14 @@ function listarVeterinarios() {
   </tr>`
     )
     .join("");
-  listaVeterinarios.innerHTML = htmlVeterinarios;
+  listaDuenos.innerHTML = htmlDuenos;
 
   Array.from(document.getElementsByClassName("editar")).forEach(
-    (botonEditar, index) => (botonEditar.onclick = editarVeterinario(index))
+    (botonEditar, index) => (botonEditar.onclick = editarDueno(index))
   );
 
   Array.from(document.getElementsByClassName("eliminar")).forEach(
-    (botonEliminar, index) => (botonEliminar.onclick = eliminarVeterinario(index))
+    (botonEliminar, index) => (botonEliminar.onclick = eliminarDueno(index))
   );
 }
 
@@ -69,28 +69,28 @@ function enviarDatos(evento) {
   switch (accion) {
     case "Editar":
       // Editar
-      veterinarios[indice.value] = datos;
+      duenos[indice.value] = datos;
       break;
 
     default:
       // Crear
-      veterinarios.push(datos);
+      duenos.push(datos);
 
       break;
   }
-  listarVeterinarios();
+  listarDuenos();
   resetModal();
 }
 
-function editarVeterinario(index) {
+function editarDueno(index) {
   return function cuandoClickeo() {
     btnGuardar.innerHTML = "Editar";
     // $("#exampleModal").modal("toogle");
-    const veterinario = veterinarios[index];
-    nombre.value = veterinario.nombre;
-    apellido.value = veterinario.apellido;
-    pais.value = veterinario.pais;
-    identificacion.value = veterinario.identificacion;
+    const dueno = duenos[index];
+    nombre.value = dueno.nombre;
+    apellido.value = dueno.apellido;
+    pais.value = dueno.pais;
+    identificacion.value = dueno.identificacion;
     indice.value = index;
   };
 }
@@ -104,15 +104,15 @@ function resetModal() {
   btnGuardar.innerHTML = "Guardar";
 }
 
-function eliminarVeterinario(index) {
+function eliminarDueno(index) {
   return function clickEliminar() {
    // console.log('indice', index);
-    veterinarios = veterinarios.filter((veterinario, indiceVeterinario)=>indiceVeterinario !== index);
-    listarVeterinarios();
+    duenos = duenos.filter((dueno, indiceDueno)=>indiceDueno !== index);
+    listarDuenos();
   }
 }
 
-listarVeterinarios();
+listarDuenos();
 
 formulario.onsubmit = enviarDatos;
 btnGuardar.onclick = enviarDatos;
