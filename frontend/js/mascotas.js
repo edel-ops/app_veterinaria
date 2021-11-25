@@ -6,22 +6,18 @@ const indice = document.getElementById("indice");
 const formulario = document.getElementById("formulario");
 const btnGuardar = document.getElementById("btn-guardar");
 
-let mascotas = [
-  {
-    tipo: "Perro",
-    nombre: "Orion",
-    dueno: "Edel",
-  },
-  {
-    tipo: "Gato",
-    nombre: "Miau",
-    dueno: "Edel",
-  },
-];
+let mascotas = [];
 
-function listarMascotas() {
-  solicitarMascotas()
-  const htmlMascotas = mascotas
+async function listarMascotas() {
+  try {
+    const respuesta = await fetch('http://localhost:5000/mascotas');
+    const mascotasDelServer = await respuesta.json();
+
+    if (Array.isArray(mascotasDelServer) && mascotasDelServer.length > 0) {
+      mascotas = mascotasDelServer;      
+    }
+
+    const htmlMascotas = mascotas
     .map(
       (mascota, index) => `<tr>
     <th scope="row">${index}</th>
@@ -51,6 +47,11 @@ function listarMascotas() {
   Array.from(document.getElementsByClassName("eliminar")).forEach(
     (botonEliminar, index) => (botonEliminar.onclick = eliminarMascotas(index))
   );
+
+  } catch (error) {
+    throw error;
+  }
+  
 }
 
 function enviarDatos(evento) {
@@ -106,17 +107,7 @@ function eliminarMascotas(index) {
   }
 }
 
-listarMascotas();
-
-function solicitarMascotas() {
-  fetch('http://localhost:5000/mascotas').then((respuesta) => {
-    if (respuesta.ok) {
-      return respuesta.json();
-    }
-  }).then(mascotasDelServer => {
-    console.log({ mascotasDelServer });
-  });
-}
+listarMascotas()
 
 formulario.onsubmit = enviarDatos;
 btnGuardar.onclick = enviarDatos;
