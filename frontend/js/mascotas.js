@@ -20,6 +20,7 @@ let mascotas = [
 ];
 
 function listarMascotas() {
+  solicitarMascotas()
   const htmlMascotas = mascotas
     .map(
       (mascota, index) => `<tr>
@@ -106,6 +107,16 @@ function eliminarMascotas(index) {
 }
 
 listarMascotas();
+
+function solicitarMascotas() {
+  fetch('http://localhost:5000/mascotas').then((respuesta) => {
+    if (respuesta.ok) {
+      return respuesta.json();
+    }
+  }).then(mascotasDelServer => {
+    console.log({ mascotasDelServer });
+  });
+}
 
 formulario.onsubmit = enviarDatos;
 btnGuardar.onclick = enviarDatos;
