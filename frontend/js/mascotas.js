@@ -14,13 +14,14 @@ async function listarMascotas() {
     const respuesta = await fetch(url);
     const mascotasDelServer = await respuesta.json();
 
-    if (Array.isArray(mascotasDelServer) && mascotasDelServer.length > 0) {
-      mascotas = mascotasDelServer;      
+    if (Array.isArray(mascotasDelServer)) {
+      mascotas = mascotasDelServer;
     }
 
-    const htmlMascotas = mascotas
-    .map(
-      (mascota, index) => `<tr>
+    if (mascotas.length > 0) {
+      const htmlMascotas = mascotas
+        .map(
+          (mascota, index) => `<tr>
     <th scope="row">${index}</th>
     <td>${mascota.tipo}</td>
     <td>${mascota.nombre}</td>
@@ -37,22 +38,28 @@ async function listarMascotas() {
       </div>
     </td>
   </tr>`
-    )
-    .join("");
-  listaMascotas.innerHTML = htmlMascotas;
+        )
+        .join("");
+      listaMascotas.innerHTML = htmlMascotas;
 
-  Array.from(document.getElementsByClassName("editar")).forEach(
-    (botonEditar, index) => (botonEditar.onclick = editarMascotas(index))
-  );
+      Array.from(document.getElementsByClassName("editar")).forEach(
+        (botonEditar, index) => (botonEditar.onclick = editarMascotas(index))
+      );
 
-  Array.from(document.getElementsByClassName("eliminar")).forEach(
-    (botonEliminar, index) => (botonEliminar.onclick = eliminarMascotas(index))
-  );
+      Array.from(document.getElementsByClassName("eliminar")).forEach(
+        (botonEliminar, index) => (botonEliminar.onclick = eliminarMascotas(index))
+      );
+      return;
+    }
+    listaMascotas.innerHTML = `<tr>
+    <td colspan = "5">No hay mascotas</td>    
+  </tr>`;
+
 
   } catch (error) {
     throw error;
   }
-  
+
 }
 
 async function enviarDatos(evento) {
@@ -67,25 +74,25 @@ async function enviarDatos(evento) {
     let method = 'POST';
     let urlEnviar = url;
     const accion = btnGuardar.innerHTML;
-  
+
     if (accion === "Editar") {
-        // Editar
-        method = 'PUT';
-        mascotas[indice.value] = datos;
-        urlEnviar = url+"/"+indice.value; // solo funciona concatenando asi de otra manera no
+      // Editar
+      method = 'PUT';
+      mascotas[indice.value] = datos;
+      urlEnviar = url + "/" + indice.value; // solo funciona concatenando asi de otra manera no
     }
-  
-    const respuesta = await fetch(urlEnviar, {method, headers: {'Content-Type': 'application/json',}, body: JSON.stringify(datos)})
-  
+
+    const respuesta = await fetch(urlEnviar, { method, headers: { 'Content-Type': 'application/json', }, body: JSON.stringify(datos) })
+
     if (respuesta.ok) {
       listarMascotas();
-      resetModal();    
+      resetModal();
     }
   } catch (error) {
     throw error;
   }
 
-  
+
 }
 
 function editarMascotas(index) {
@@ -109,11 +116,20 @@ function resetModal() {
 }
 
 function eliminarMascotas(index) {
-  return function clickEliminar() {
-   // console.log('indice', index);
-    mascotas = mascotas.filter((mascota, indiceMascota)=>indiceMascota !== index);
-    listarMascotas();
-  }
+  const urlEnviar = `${url}/${index}`;
+  return async function clickEliminar() {
+    try {
+      // console.log('indice', index);
+      const respuesta = await fetch(urlEnviar, { method: 'DELETE' })
+
+      if (respuesta.ok) {
+        listarMascotas();
+        resetModal();
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
 }
 
 listarMascotas()
