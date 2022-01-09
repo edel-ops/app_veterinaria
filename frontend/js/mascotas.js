@@ -57,7 +57,8 @@ async function listarMascotas() {
 
 
   } catch (error) {
-    throw error;
+    console.log('error');
+    $(".alert").show();
   }
 
 }
